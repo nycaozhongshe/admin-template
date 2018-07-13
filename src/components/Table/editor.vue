@@ -91,21 +91,25 @@
     <div class="el-dialog__footer">
       <el-button type="primary"
                  @click="validate"
+                 v-waves
                  :disabled="btnDisabled">
         确认
       </el-button>
       <el-button @click="initData"
+                 v-waves
                  :disabled="btnDisabled">
         重置
       </el-button>
       <el-button type="primary"
                  @click="pass"
                  v-if="requrieCheck"
+                 v-waves
                  :disabled="btnDisabled">
         通过
       </el-button>
       <el-button @click="refuse"
                  v-if="requrieCheck"
+                 v-waves
                  :disabled="btnDisabled">
         拒绝
       </el-button> <br>
@@ -120,6 +124,7 @@ import check from '../Table/check.vue';
 import uploadImg from '@/components/Table/uploadImg.vue';
 import uploadVideo from '@/components/Table/uploadVideo.vue';
 import autocomplete from '@/components/Table/autocomplete.vue';
+import waves from '@/directive/waves'; // base on element-ui
 
 export default {
   name: 'customEdit',
@@ -150,6 +155,8 @@ export default {
       btnDisabled: false,
     };
   },
+  directives: { waves },
+
   components: {
     uploadImg,
     uploadVideo,

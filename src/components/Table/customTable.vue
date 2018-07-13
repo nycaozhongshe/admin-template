@@ -123,6 +123,7 @@
       <template slot-scope="scope">
         <el-button type="primary"
                    class="add-section"
+                   v-waves
                    @click='changeInfo({scope,command:"addSection"})'>
           新增课时
         </el-button>
@@ -133,6 +134,8 @@
 
 <script>
 import chapterList from './chapterList';
+import waves from '@/directive/waves'; // base on element-ui
+
 export default {
   name: 'customTable',
   props: {
@@ -176,6 +179,7 @@ export default {
   data() {
     return {};
   },
+  directives: { waves },
 
   components: { chapterList },
 

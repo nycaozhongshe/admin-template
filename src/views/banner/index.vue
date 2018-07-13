@@ -42,6 +42,7 @@
                :title="editTitle"
                :visible.sync="eiditDialogVisible"
                width="50%"
+               v-el-drag-dialog
                @close="closeEditor"
                center>
       <custom-editor-box :col="col"
@@ -70,7 +71,7 @@
 <script>
 import tableTemplate from '@/components/table/tableTemplate.js';
 import Sticky from '@/components/Sticky/index';
-
+import elDragDialog from '@/directive/el-dragDialog' // base on element-ui
 let col = [
   {
     prop: 'fileRealname',
@@ -169,6 +170,7 @@ export default {
       return formatter;
     },
   },
+  directives: { elDragDialog },
   components: {
     Sticky,
   },

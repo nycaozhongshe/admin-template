@@ -32,12 +32,14 @@
       <el-button size="small"
                  @click="clearFilterKey"
                  v-if="searchShow"
+                 v-waves
                  class="clear">
         清空
       </el-button>
       <el-button type="success"
                  size="small"
                  @click="postData"
+                 v-waves
                  v-if="searchShow"
                  class="clear">
         查询
@@ -45,6 +47,7 @@
       <el-button type="success"
                  size="small"
                  @click="addInfo"
+                 v-waves
                  v-if="bottonShow('add')"
                  class="clear">
         新增
@@ -52,6 +55,7 @@
 
       <el-button type="success"
                  size="small"
+                 v-waves
                  @click="exportExcel"
                  v-if="bottonShow('export')"
                  class="clear">
@@ -60,12 +64,14 @@
       <el-button type="success"
                  size="small"
                  @click="del"
+                 v-waves
                  v-if="bottonShow('del')"
                  class="clear">
         删除
       </el-button>
       <el-button type="success"
                  size="small"
+                 v-waves
                  @click="choosingCourse"
                  v-if="bottonShow('choosingCourse')"
                  class="clear">
@@ -77,6 +83,8 @@
 </template>
 
 <script>
+import waves from '@/directive/waves'; // base on element-ui
+
 export default {
   props: {
     'search-type-list': {
@@ -93,6 +101,7 @@ export default {
       type: Boolean,
     },
   },
+  directives: { waves },
   data() {
     return {
       filterKey: '',

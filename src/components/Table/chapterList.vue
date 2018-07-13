@@ -21,7 +21,6 @@
             删除
           </el-button>
         </div>
-
       </div>
       <div v-if=" !sections||!sections.length">
         暂无内容
