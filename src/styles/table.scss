@@ -1,0 +1,23 @@
+.table-page__wrapper {
+  height: 100%;
+  .table-page-header__wrapper {
+    display: flex;
+    justify-content: space-between;
+    height: 46px;
+    line-height: 46px;
+    padding: 0 20px;
+    color: #fff;
+    font-size: 14px;
+    background: linear-gradient(
+      90deg,
+      #20b6f9 0%,
+      #20b6f9 0%,
+      #2178f1 100%,
+      #2178f1 100%
+    );
+  }
+  .table-page-footer {
+    text-align: right;
+    padding: 20px 20px;
+  }
+}
