@@ -1,21 +1,4 @@
-import {
-  createdBanner,
-  delBanner,
-  updateBanner,
-  getBanner,
-} from '@/api/banner';
-
-const banner = {
-  state: {},
-
-  mutations: {},
-
-  actions: {
-    createdBanner,
-    delBanner,
-    updateBanner,
-    getBanner,
-  },
+import * as actions from '@/api/banner';
+export default {
+  actions,
 };
-
-export default banner;

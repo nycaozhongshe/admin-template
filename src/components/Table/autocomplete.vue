@@ -35,7 +35,11 @@ export default {
 
   components: {},
 
-  computed: {},
+  computed: {
+    toggleValue() {
+      return this.formData[this.toggleKey];
+    },
+  },
   methods: {
     querySearch(queryString, cb) {
       var restaurants = this.restaurants;
@@ -54,22 +58,23 @@ export default {
       };
     },
     getRestaurants() {
-      let index = this.formData[this.toggleKey];
-      if (!index && index !== 0) {
+      if (!this.toggleValue && this.toggleValue !== 0) {
         this.modelToggle && this.$message('请先选择分类');
         return;
       }
-      let methods = this.getMethods[index];
+      let methods = this.getMethods[this.toggleValue];
       // selectTopicByName
-      this.$store.dispatch(methods, { importName: this.model }).then(res => {
-        res = res || [];
-        this.restaurants = res.map(item => {
-          return {
-            id: item.id,
-            value: item.topicName || item.name,
-          };
+      this.$store
+        .dispatch(methods, { importName: this.model || '' })
+        .then(res => {
+          res = res || [];
+          this.restaurants = res.map(item => {
+            return {
+              id: item.id,
+              value: item.topicName || item.name,
+            };
+          });
         });
-      });
     },
     handleSelect(item) {
       this.postKey(item.id);
@@ -91,6 +96,9 @@ export default {
       }, 1000);
     });
   },
+  beforeDestroy() {
+    this.$bus.$off('edit-clear');
+  },
   watch: {
     data: {
       handler(val) {
@@ -101,6 +109,11 @@ export default {
     },
     model(val) {
       this.getRestaurants();
+    },
+    toggleValue(val) {
+      if (val !== undefined) {
+        this.getRestaurants();
+      }
     },
   },
 };

@@ -7,7 +7,11 @@
 export default {
   beforeRouteEnter(to, from, next) {
     next(vm => {
-      vm.$router.replace(from.path);
+      vm.$router.replace({
+        path: from.path,
+        params: from.params,
+        query: from.query,
+      });
     });
   },
 };

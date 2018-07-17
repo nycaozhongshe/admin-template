@@ -15,7 +15,7 @@
             @current-change="currentChange"
             ref="table"
             style="width: 100%">
-    <!-- <el-table-column type="expand"
+    <el-table-column type="expand"
                      fixed="left"
                      v-if="expandShow">
       <template slot-scope="props">
@@ -31,7 +31,7 @@
           </custom-table>
         </div>
       </template>
-    </el-table-column> -->
+    </el-table-column>
     <el-table-column type="expand"
                      fixed="left"
                      v-if="courseShow">
@@ -85,8 +85,8 @@
     <el-table-column fixed="right"
                      label="操作"
                      v-if="!noOperation"
-                     align="center"
-                     :width="operationList.length>2? 240: 100">
+                     align="right"
+                     :width="240">
       <template slot-scope="scope">
 
         <div v-if="operationList.lenth>3">
@@ -146,7 +146,7 @@ export default {
       default: [],
     },
     height: {
-      default: false,
+      default: null,
     },
     col: {
       required: true,
@@ -165,7 +165,9 @@ export default {
       default: false,
     },
     'expand-operation-list': {
-      default: [],
+      default: function() {
+        return [];
+      },
     },
     /** 课程列表 */
     courseShow: {

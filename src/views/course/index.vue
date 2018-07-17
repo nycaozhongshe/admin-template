@@ -1,10 +1,10 @@
 <template>
-  <div class="table-page__wrapper"
+  <div class="father user-list table-page__wrapper mini-course__wrapper"
        style="overflow: hidden;"
        ref="tablePageWraper">
     <div class="table-page-header__wrapper">
       <span class="title">
-        {{title}}
+        课程列表
         <custom-sort :sort-list="sortList"
                      @post-sort-data="getSortData">
         </custom-sort>
@@ -16,21 +16,19 @@
                      :button-type="['add']">
       </custom-search>
     </div>
-
-    <custom-table :col="col"
-                  :data="tableData"
+    <custom-table :data="tableData"
                   :height="tableHeight"
                   @cell-click="cellClick"
                   @current-change="currentChange"
-                  :operation-list="operationList"
                   :expandOperationList="[]"
                   :v-loading="loading"
                   :expandShow="false"
                   ref="childTable"
+                  :col="col"
+                  :operation-list="operationList"
                   :formatter="formatter"
                   @change-info="changeInfo">
     </custom-table>
-
     <el-pagination class="table-page-footer"
                    @current-change="handleCurrentChange"
                    :current-page.sync="currentPage"
@@ -43,7 +41,6 @@
                :title="editTitle"
                :visible.sync="eiditDialogVisible"
                width="50%"
-               v-el-drag-dialog
                @close="closeEditor"
                center>
       <custom-editor-box :col="col"
@@ -66,131 +63,182 @@
       </custom-check-box>
 
     </el-dialog>
+
   </div>
 </template>
 
 <script>
 import tableTemplate from '@/components/table/tableTemplate.js';
+
 let col = [
   {
-    prop: 'fileRealname',
-    label: '预览图片',
-    width: 150,
+    prop: 'name',
+    label: '课程名称',
     fixed: 'left',
     required: true,
-    disabled: true,
-    type: 'img',
+    width: 150,
   },
   {
-    prop: 'fileRealname',
-    label: '图片名称',
-    width: 150,
+    prop: 'coverImg',
+    label: '封面图',
+    type: 'uploadImg',
     required: true,
+    width: 150,
+  },
+  {
+    prop: 'introduceImg',
+    label: '介绍图',
+    required: true,
+    width: 150,
     type: 'uploadImg',
   },
   {
-    prop: 'anchorType',
-    label: '类型',
-    width: 150,
+    prop: 'originalPrice',
+    label: '原价',
     required: true,
-    type: 'select',
-    select: [{ label: '专题', value: 0 }, { label: '课程', value: 1 }],
+    width: 150,
+    type: 'number',
   },
   {
-    prop: 'anchorId',
-    label: '专题或课程',
-    hidden: true,
+    prop: 'categoryId',
+    label: '分类',
+    required: true,
     width: 150,
-    type: 'autocomplete',
-    toggleProp: 'anchorType',
-    getMethods: ['selectTopicByName', 'selectCourseByName'],
+    type: 'cascader',
+    options: [],
   },
   {
-    prop: 'sort',
-    label: '排序',
-    width: 150,
+    prop: 'currentPrice',
+    label: '现价',
     required: true,
+    type: 'number',
+  },
+  {
+    prop: 'difficulty',
+    label: '学习难度',
+    required: true,
+    type: 'number',
+  },
+  {
+    prop: 'virtualLearnNum',
+    label: '虚拟学习人数',
+    required: true,
+    type: 'number',
+  },
+  {
+    prop: 'createTime',
+    label: '创建时间',
+    type: 'number',
+    disabled: true,
+    width: 150,
   },
 ];
+let statusList = ['正常', '停用'];
 
-let searchTypeList = [
-  // {
-  //   label: "姓名",
-  //   prop: "name"
-  // }
-];
-
-let formatter = (row, column, cellValue, index) => {
+// let searchTypeList = [
+//   {
+//     label: '姓名',
+//     prop: 'name',
+//   },
+// ];
+let formatter = function(row, column, cellValue, index) {
   if (cellValue === 0 || cellValue) {
     switch (column.property) {
-      case 'anchorType':
-        return cellValue ? '课程' : '专题';
+      //账号状态
+      case 'createTime':
+        return cellValue;
         break;
+      // lecturerName
+      //创建时间
+      case 'categoryId':
+        return row.category.title;
+        break;
+      case 'deleted':
+        return '删除';
+        break;
+
       default:
         return cellValue;
     }
+    //删除状态
+  } else if (column.property === 'deleted') {
+    return '正常';
   } else {
     return '';
   }
 };
 let operationList = [
   {
+    command: 'edit',
+    content: '编辑',
+    type: 'primary',
+  },
+  {
     command: 'del',
     content: '删除',
     type: 'danger',
   },
+  // {
+  //   command: 'add',
+  //   content: '添加到课程',
+  // },
 ];
 export default {
-  name: 'courseTopicList',
+  name: 'user-list',
   extends: tableTemplate,
   data() {
     return {
+      formatter,
       col,
-      searchTypeList,
       operationList,
-      editTitle: '',
-      title:"轮播图管理",
-      sortList: [],
-      cellClickKey: ['topicName'],
-      delMethods: 'delBanner',
-      getMethods: 'getBanner',
-      editMethods: 'updateBanner',
-      delInformationTest: '删除成功',
+      // searchType: 'name',
+      editTitle: '编辑信息',
+      cellClickKey: ['name'],
+      delMethods: 'createOrUpdateCourse',
+      editMethods: 'delCourse',
+      getMethods: 'getCourseList',
       delConfirmTest: '请确认是否停用此条信息',
-      pageTotal: 0,
+      delInformationTest: '停用成功',
       editorProcessParams: function(params) {
-        params.filePath = 'pavg2g658.bkt.clouddn.com';
-        params.anchorId = params.autocomplete;
-        return params;
+        delete params.category;
+        params.categoryId = params.categoryId[1];
+        return Object.assign({}, params);
       },
+      //自定义
+      courseVisible: false,
+      checkboxData: [],
+      selectedContent: [],
+      formLabelAlign: {
+        courseId: '',
+        orderName: '',
+        orderNum: '',
+      },
+      toCourseVisible: false,
     };
   },
-  computed: {
-    formatter() {
-      return formatter;
-    },
-  },
   components: {},
+  computed: {},
   methods: {
-    /**
-     * 删除参数处理
-     */
-    delProcessParams(row) {
-      return { id: row.id };
-    },
     /*
       * 点击指定字段显示预览
      */
-    cellClick(row, column, cell, event) {},
-    /*
-     * 多选时触发事件
-     */
-    handleSelectionChange(selection) {
-      this.checkboxData = selection;
+    cellClick(params) {
+      let { row, column, cell, event } = params;
+      // if (this.cellClickKey.indexOf(column.property) >= 0) {
+      //   this.selection = row;
+      //   this.$router.push({
+      //     path: 'courseDetail',
+      //     query: {
+      //       id: this.selection.id,
+      //       name: this.selection.name,
+      //     },
+      //   });
+      // }
     },
     changeInfo(command) {
       switch (command.command) {
         case 'view':
+          this.editTitle = '编辑信息';
           this.selection = command.scope.row;
           this.viewtDialogVisible = true;
           break;
@@ -199,34 +247,60 @@ export default {
           break;
         case 'edit':
           this.editTitle = '编辑信息';
-          this.editMethods = 'updateBanner';
           this.selection = command.scope.row;
           this.eiditDialogVisible = true;
+          break;
+        case 'add':
+          this.selection = command.scope.row;
+          this.toCourseVisible = true;
           break;
       }
     },
     addInfo() {
       this.editTitle = '新建信息';
-      this.editMethods = 'createdBanner';
       this.selection = {};
       this.eiditDialogVisible = true;
     },
-    parameterHandling() {
-      return {};
+    miniCoursePlateList() {
+      this.$store.dispatch('getCourseTypeList', {}).then(res => {
+        // this.col[4].options = res.map(item => {
+        //   let children = item.categories.map(i => {
+        //     return {
+        //       label: i.title,
+        //       value: i.id,
+        //     };
+        //   });
+        //   let params = {
+        //     label: item.title,
+        //     value: item.id,
+        //     children,
+        //   };
+        //   return params;
+        // });
+      });
     },
+    /**
+     * 获取列表参数操作
+     */
     afterGetData(res) {
-      this.tableData = res || [];
-      this.pageTotal = res.length;
+      console.log(res);
+      this.pageTotal = res.total || 0;
+      this.tableData = res.content || [];
     },
+  },
+  created() {
+    this.miniCoursePlateList();
   },
 };
 </script>
 
-<style lang="scss" >
+<style lang="scss" scoped>
 .dialog-footer {
   text-align: center;
 }
-.special-topic-management__wrapper {
+</style>
+<style lang="scss">
+.mini-course__wrapper {
   .el-table td:nth-child(2) {
     color: #66b1ff;
     cursor: pointer;

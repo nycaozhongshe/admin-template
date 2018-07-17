@@ -25,11 +25,8 @@ export default {
       loading: false,
     };
   },
-
   components: {},
-
   computed: {},
-
   mounted() {
     this.getVersion();
   },
@@ -52,5 +49,8 @@ export default {
 <style lang='scss' scoped>
 .switch {
   margin-top: 20px;
+}
+.version_warpper{
+  padding: 20px;
 }
 </style>

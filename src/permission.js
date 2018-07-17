@@ -4,6 +4,7 @@ import 'nprogress/nprogress.css'; // progress bar style
 
 //路由守卫-判断登陆状态
 router.beforeEach(({ name }, from, next) => {
+  // document.body.scrollTop = 0;
   NProgress.start(); // start progress bar
   if (name != 'login') {
     if (JSON.parse(sessionStorage.getItem('logged'))) {
@@ -21,5 +22,6 @@ router.beforeEach(({ name }, from, next) => {
 });
 
 router.afterEach(() => {
+  window.scrollTo(0, 0);
   NProgress.done(); // finish progress bar
 });

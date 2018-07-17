@@ -1,12 +1,4 @@
-import { createImgUpToken, createVideoUpToken } from '@/api/upload';
-
+import * as actions from '@/api/upload';
 export default {
-  state: {},
-
-  mutations: {},
-
-  actions: {
-    createImgUpToken,
-    createVideoUpToken,
-  },
+  actions,
 };

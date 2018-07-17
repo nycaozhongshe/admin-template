@@ -10,6 +10,9 @@ import customDalog from '@/components/Table/customDalog.vue';
 import customSearch from '@/components/Table/customSearch.vue';
 
 import resizeMixin from './resizeMixin';
+
+import elDragDialog from '@/directive/el-dragDialog'; // base on element-ui
+
 export default {
   extends: resizeMixin,
   data() {
@@ -18,36 +21,38 @@ export default {
       tableData: [],
       currentPage: 1,
       pageTotal: 0,
-      pageConfig: { first_page: 0, page_size: 100 },
-      tableHeight: 500, //页脚 //总数
+      pageConfig: { first_page: 0, page_size: 30 },
+      tableHeight: 500,
       searchType: '',
       searchKey: '',
       searchInputType: 'text',
       searchTypeList: [],
+      sortList: [],
+      title: '',
       filterKey: '',
       sortIcon: '',
       sort: '',
       sortType: '',
-      /** //"1" 降序
+      /** //"1" 降序 //页脚 //总数
        * disabled 编辑不显示
        * type  select date textarea
        */ col: '',
       selection: {},
       eiditDialogVisible: false,
-      viewtDialogVisible: false, //保存点击行的信息 //编辑窗口 //查看窗口
+      viewtDialogVisible: false,
       delMethods: null,
       editMethods: null,
       getMethods: null,
-      /**
+      /** //保存点击行的信息 //编辑窗口 //查看窗口
        * 点击单元格 显示查看窗口 可为多个
        */ cellClickKey: [],
       /**
        * 编辑窗口发送参数处理
-       */
-      editorProcessParams: null,
+       */ editorProcessParams: null,
       delConfirmTest: '此操作将永久删除该信息',
       delInformationTest: '删除成功',
       toggleRowExpansionIndex: 0,
+      neglectingHeight: [],
     };
   },
   components: {
@@ -58,6 +63,7 @@ export default {
     customDalog,
     customSearch,
   },
+  directives: { elDragDialog },
   methods: {
     /** 替代Create 方便覆盖 */
     initCreated() {
@@ -120,7 +126,7 @@ export default {
      * 初始化页脚
      */
     initPage() {
-      (this.pageConfig.first_page = 0), (this.pageConfig.page_size = 100);
+      (this.pageConfig.first_page = 0), (this.pageConfig.page_size = 30);
       this.currentPage = 1;
     },
     clearFilterKey() {
@@ -159,7 +165,15 @@ export default {
          * 计算表格的高度
          */
     calcTableHeight() {
-      this.tableHeight = this.$refs.tablePageWraper.offsetHeight - 120;
+      let numHeight = 120;
+      this.neglectingHeight.forEach(item => {
+        if (item === 'title') {
+          numHeight -= 46;
+        } else if (item === 'pagination') {
+          numHeight -= 68;
+        }
+      });
+      this.tableHeight = this.$refs.tablePageWraper.offsetHeight - numHeight;
     },
     /*
          * 点击页脚
@@ -235,7 +249,7 @@ export default {
     pageParameterHandling() {
       let params = {};
       if (this.searchKey && this.searchType) {
-        (this.pageConfig.first_page = 0), (this.pageConfig.page_size = 100);
+        (this.pageConfig.first_page = 0), (this.pageConfig.page_size = 30);
         this.currentPage = 1;
         params = Object.assign(this.searchParameterHandling(), this.pageConfig);
       } else {
@@ -258,28 +272,28 @@ export default {
      * 获取列表
      */
     getData() {
+      console.log('tag', '')
       this.loading = true;
       this.$store
         .dispatch(this.getMethods, this.parameterHandling())
         .then(res => {
           this.loading = false;
-
           this.$refs.table && (this.$refs.table.bodyWrapper.scrollTop = 0);
           this.$refs.childTable &&
             (this.$refs.childTable.$refs.table.bodyWrapper.scrollTop = 0);
-
           this.afterGetData(res);
         })
         .catch(err => {
           this.loading = false;
+          console.log(err)
         });
     },
     /**
      * 获取列表参数操作
      */
     afterGetData(res) {
-      this.pageTotal = res.total;
-      this.tableData = res.content;
+      this.pageTotal = res.total || 0;
+      this.tableData = res.content || [];
     },
   },
   mounted() {

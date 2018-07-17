@@ -230,6 +230,9 @@ export default {
       this.clear();
     });
   },
+  beforeDestroy() {
+    this.$bus.$off('edit-clear');
+  },
   watch: {
     videoKey(val) {
       this.model = val;

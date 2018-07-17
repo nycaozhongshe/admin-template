@@ -6,7 +6,7 @@ const globalMethods = {
       this._initResize();
     });
 
-    this.$once('hook:beforeDestroy', function() {
+    this.$once('hook:beforeDestroy', ()=> {
       this.$bus.$off('resize');
     });
   },

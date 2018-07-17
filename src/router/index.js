@@ -12,17 +12,17 @@ Vue.use(Router);
 import Layout from '../views/layout/Layout';
 
 /**
-* hidden: true                   if `hidden:true` will not show in the sidebar(default is false)
-* alwaysShow: true               if set true, will always show the root menu, whatever its child routes length
-*                                if not set alwaysShow, only more than one route under the children
-*                                it will becomes nested mode, otherwise not show the root menu
-* redirect: noredirect           if `redirect:noredirect` will no redirct in the breadcrumb
-* name:'router-name'             the name is used by <keep-alive> (must set!!!)
-* meta : {
-    title: 'title'               the name show in submenu and breadcrumb (recommend set)
-    icon: 'svg-name'             the icon show in the sidebar,
-  }
-**/
+  * hidden: true                   if `hidden:true` will not show in the sidebar(default is false)
+  * alwaysShow: true               if set true, will always show the root menu, whatever its child routes length
+  *                                if not set alwaysShow, only more than one route under the children
+  *                                it will becomes nested mode, otherwise not show the root menu
+  * redirect: noredirect           if `redirect:noredirect` will no redirct in the breadcrumb
+  * name:'router-name'             the name is used by <keep-alive> (must set!!!)
+  * meta : {
+      title: 'title'               the name show in submenu and breadcrumb (recommend set)
+      icon: 'svg-name'             the icon show in the sidebar,
+    }
+  **/
 export const constantRouterMap = [
   {
     path: '/login',
@@ -56,6 +56,68 @@ export const constantRouterMap = [
     ],
   },
   {
+    path: '',
+    component: Layout,
+    children: [
+      {
+        path: 'versionController',
+        name: 'versionController',
+        component: () => import('@/views/versionController/index'),
+        meta: { title: '版本控制', icon: 'form' },
+      },
+    ],
+  },
+  {
+    path: '',
+    component: Layout,
+    children: [
+      {
+        path: 'banner',
+        name: 'banner',
+        component: () => import('@/views/banner/index'),
+        meta: { title: '轮播图管理', icon: 'form' },
+      },
+    ],
+  },
+  {
+    path: '',
+    component: Layout,
+    children: [
+      {
+        path: 'courseType',
+        name: 'courseType',
+        component: () => import('@/views/courseType/index'),
+        meta: { title: '课程类型管理', icon: 'form' },
+      },
+    ],
+  },
+  {
+    path: '',
+    component: Layout,
+    children: [
+      {
+        path: 'course',
+        name: 'course',
+        component: () => import('@/views/course/index'),
+        meta: { title: '课程管理', icon: 'form' },
+      },
+    ],
+  },
+  {
+    path: '',
+    component: Layout,
+    hidden: true,
+    children: [
+      {
+        path: 'courseDetail',
+        name: 'courseDetail',
+        component: () => import('@/views/courseDetail/index'),
+        meta: { title: '课程详情', icon: 'form' },
+      },
+    ],
+  },
+  //
+  {
     path: '/example',
     component: Layout,
     redirect: '/example/table',
@@ -72,43 +134,7 @@ export const constantRouterMap = [
         path: 'tree',
         name: 'Tree',
         component: () => import('@/views/tree/index'),
-        meta: { title: 'Tree', icon: 'tree' },
-      },
-    ],
-  },
-  {
-    path: '/form',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        name: 'Form',
-        component: () => import('@/views/form/index'),
-        meta: { title: 'Form', icon: 'form' },
-      },
-    ],
-  },
-  {
-    path: '/versionController',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        name: 'versionController',
-        component: () => import('@/views/versionController/index'),
-        meta: { title: '版本控制', icon: 'form' },
-      },
-    ],
-  },
-  {
-    path: '',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        name: 'banner',
-        component: () => import('@/views/banner/index'),
-        meta: { title: '轮播图管理', icon: 'form' },
+        meta: { title: 'Tree', icon: 'table' },
       },
     ],
   },

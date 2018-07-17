@@ -21,18 +21,39 @@ export default {
     return {
       activeName: '',
       visitedViews: [],
+      ignoreRoute: ['课程详情'],
     };
   },
   methods: {
     addTab(params) {
+      if (this.isExistRoute(params.title, this.ignoreRoute)) return;
       this.activeName = params.path;
       !this.isExist(params, this.visitedViews) &&
         this.visitedViews.push(params);
     },
+    /**
+     * 查重
+     * @param params 子
+     * @param array 父
+     */
     isExist(params, array) {
       let is_exist = false;
       array.forEach(tab => {
         if (tab.title == params.title) {
+          is_exist = true;
+        }
+      });
+      return is_exist;
+    },
+    /**
+     * 忽略指定tab
+     * @param params 子
+     * @param array 父
+     */
+    isExistRoute(params, array) {
+      let is_exist = false;
+      array.forEach(tab => {
+        if (tab == params) {
           is_exist = true;
         }
       });

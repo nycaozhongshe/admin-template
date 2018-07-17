@@ -1,28 +1,28 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import app from './modules/app';
-import user from './modules/user';
-import banner from './modules/banner';
-
-import upload from './modules/upload';
-import topic from './modules/topic';
-
-import course from './modules/course';
 
 import getters from './getters';
 
 Vue.use(Vuex);
 
-const store = new Vuex.Store({
-  modules: {
-    app,
-    user,
-    banner,
-    upload,
-    course,
-    topic,
-  },
-  getters,
-});
+
+const getChunks = modulesContext => {
+  const chunks = modulesContext.keys().reduce((modules, key) => {
+    modules[key.replace(/(^\.\/)|(\.js$)/g, '')] = modulesContext(key).default;
+    return modules;
+  }, {});
+  return chunks;
+};
+const modules = require.context('./modules', false, /\.js$/);
+const modulesChunks = { modules: getChunks(modules) };
+
+const store = new Vuex.Store(
+  Object.assign(
+    {
+      getters,
+    },
+    modulesChunks,
+  ),
+);
 
 export default store;
