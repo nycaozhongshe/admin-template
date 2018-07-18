@@ -16,3 +16,4 @@ export function createOrUpdateCourse({}, params) {
 export function delCourse({}, params) {
   return request.post(baseUrl + '/course/delete', params);
 }
+

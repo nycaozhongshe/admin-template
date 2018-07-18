@@ -23,7 +23,7 @@
                   v-model.number="formData[item.prop]"
                   type="number"
                   :max="item.max"
-                  :min="item.min">
+                  :min="item.min||0">
         </el-input>
         <!-- :rows="3"-->
 

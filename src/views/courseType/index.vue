@@ -23,6 +23,7 @@
                   @expand-change="expandChange"
                   @current-change="currentChange"
                   @click-expand-content="clickExpandContent"
+                  :operation-cover="true"
                   v-loading="loading"
                   ref="childTable"
                   :expand-operation-list="expandOperationList"
