@@ -59,7 +59,7 @@ export default {
       location.reload();
     },
     freshen() {
-      this.$router.push('/freshen')
+      this.$router.replace('/freshen')
     },
   },
 };
