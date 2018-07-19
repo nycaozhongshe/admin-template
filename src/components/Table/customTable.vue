@@ -25,7 +25,6 @@
                         size="mini"
                         :operation-list="expandOperationList"
                         :formatter="formatter"
-                        :operation-cover="true"
                         :expandShow="false"
                         class="expand-content__warpper"
                         @change-info="changeInfoType">
@@ -90,10 +89,11 @@
     <el-table-column fixed="right"
                      label="操作"
                      v-if="!noOperation"
-                     :width="operationWidth">
+                     align="right"
+                     :width="240">
       <template slot-scope="scope">
 
-        <div v-if="operationList.length>3">
+        <div v-if="operationList.lenth>3">
           <el-dropdown @command="changeInfo"
                        trigger="click">
             <span class="el-dropdown-link">
@@ -107,8 +107,7 @@
             </el-dropdown-menu>
           </el-dropdown>
         </div>
-        <div v-else
-             :style="{'text-align':operationList.length ===1? 'center': 'right'} ">
+        <div v-else>
           <el-button v-for=" (item,index) in operationList"
                      :type="item.type || 'success'"
                      @click="changeInfo({scope,command:item.command})"
@@ -119,6 +118,20 @@
         </div>
       </template>
 
+    </el-table-column>
+
+    <el-table-column fixed="right"
+                     label="新增课时"
+                     v-if="addSectionShow"
+                     width="100">
+      <template slot-scope="scope">
+        <el-button type="primary"
+                   class="add-section"
+                   v-waves
+                   @click='changeInfo({scope,command:"addSection"})'>
+          新增课时
+        </el-button>
+      </template>
     </el-table-column>
   </el-table>
 </template>
@@ -169,9 +182,6 @@ export default {
     addSectionShow: {
       default: false,
     },
-    'operation-cover': {
-      default: false,
-    },
   },
   data() {
     return {};
@@ -180,13 +190,7 @@ export default {
 
   components: { chapterList },
 
-  computed: {
-    operationWidth() {
-      let width = this.operationList.length === 3 ? 240 : 160;
-      if (this.operationCover) width = 240;
-      return width;
-    },
-  },
+  computed: {},
 
   mounted() {},
 

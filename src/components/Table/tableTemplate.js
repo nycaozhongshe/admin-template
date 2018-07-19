@@ -252,10 +252,8 @@ export default {
         (this.pageConfig.first_page = 0), (this.pageConfig.page_size = 30);
         this.currentPage = 1;
         params = Object.assign(this.searchParameterHandling(), this.pageConfig);
-
       } else {
         params = Object.assign({}, this.pageConfig);
-
       }
       if (this.sort && this.sortType) {
         params.sort = this.sort;
@@ -274,6 +272,7 @@ export default {
      * 获取列表
      */
     getData() {
+      console.log('tag', '')
       this.loading = true;
       this.$store
         .dispatch(this.getMethods, this.parameterHandling())

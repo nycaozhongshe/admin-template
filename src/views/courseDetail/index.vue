@@ -32,7 +32,7 @@
                   :operation-list="operationList"
                   :formatter="formatter"
                   v-loading="loading"
-                  :course-show="true"
+                  :courseShow="true"
                   ref="childTable"
                   @del-section="delSection"
                   @edit-section="editSection"
@@ -92,7 +92,7 @@ let col = [
   {
     prop: 'sort',
     label: '排序',
-    width: 150,
+    width: 100,
     required: true,
     type: 'number',
   },
@@ -145,14 +145,16 @@ let sectionCol = [
 ];
 let operationList = [
   {
+    command: 'view',
+    content: '内容',
+  },
+  {
     command: 'edit',
     content: '编辑',
-    type: 'primary',
   },
   {
     command: 'del',
     content: '删除',
-    type: 'danger',
   },
   {
     command: 'addSection',
@@ -161,7 +163,7 @@ let operationList = [
 ];
 let searchTypeList = [];
 export default {
-  name: 'courseDetail',
+  name: 'course-list',
   extends: tableTemplate,
   data() {
     return {
@@ -172,9 +174,9 @@ export default {
       searchTypeList,
       filterKey: '',
       title: '课程分类列表',
-      delMethods: 'delCourseChapter',
-      editMethods: 'createOrUpdateCourseChapter',
-      getMethods: 'getCourseChapterList',
+      delMethods: 'delCourseDetail',
+      editMethods: 'createOrUpdateCourseDetail',
+      getMethods: 'getCourseDetailList',
       searchInputType: 'text',
       editTitle: '',
       labelsSelect: [],
@@ -185,6 +187,7 @@ export default {
       /**
        * 编辑参数处理
        * @param  Object
+       *
        */
       editorProcessParams: function(params) {
         params.sort = Number(params.sort);
@@ -221,19 +224,19 @@ export default {
     editSection(item) {
       this.editCol = this.sectionCol;
       this.editTitle = '编辑课时';
-      this.editMethods = 'createOrUpdateCourseSection';
+      this.editMethods = 'addMiniCourseSection';
       this.selection = item;
       this.eiditDialogVisible = true;
     },
     delSection(row) {
-      this.delMethods = 'delCourseSection';
+      this.delMethods = 'delMiniCourseSection';
       this.delConfirm(row);
     },
     //新增板块/类型
     addInfo() {
       this.editCol = this.coltable;
       this.editTitle = '新建章节';
-      this.editMethods = 'createOrUpdateCourseChapter';
+      this.editMethods = 'addMiniChapter';
       this.selection = {
         courseId: this.$route.query.id,
       };
@@ -252,19 +255,19 @@ export default {
         edit: () => {
           this.editCol = this.coltable;
           this.editTitle = '编辑章节';
-          this.editMethods = 'createOrUpdateCourseChapter';
+          this.editMethods = 'addMiniChapter';
           this.selection = command.scope.row;
           this.eiditDialogVisible = true;
         },
         del: () => {
-          this.delMethods = 'delCourseChapter';
+          this.delMethods = 'delMiniChapter';
           this.delConfirm(command.scope.row);
         },
         /** 新增课程类型 */
         addSection: () => {
           this.editCol = this.sectionCol;
           this.editTitle = '新建课时';
-          this.editMethods = 'createOrUpdateCourseSection';
+          this.editMethods = 'addMiniCourseSection';
           this.selection = {
             contentType: 0,
             courseId: command.scope.row.courseId,
@@ -275,27 +278,30 @@ export default {
       };
       operateMethods[command.command]();
     },
-    /**
-     * 获取列表发送参数处理
-     */
-    parameterHandling() {
-      return { courseId: this.$route.query.id };
-    },
-    afterGetData(res) {
-      this.tableData = res || [];
-      if (this.$refs.childTable) {
-        this.$refs.childTable.$refs.table.toggleRowExpansion(
-          this.tableData[this.toggleRowExpansionIndex || 0],
-        );
-      }
+    getData() {
+      this.loading = true;
+      this.$store
+        .dispatch('miniChapterList', { courseId: this.$route.query.id })
+        .then(res => {
+          this.loading = false;
+          if (res.data.code == '0') {
+            this.loading = false;
+            this.tableData = res.data.data;
+            if (this.$refs.childTable) {
+              this.$refs.childTable.$refs.table.bodyWrapper.scrollTop = 0;
+              this.$refs.childTable.$refs.table.toggleRowExpansion(
+                this.tableData[this.toggleRowExpansionIndex],
+              );
+            }
+            this.pageTotal = res.data.data.total;
+          }
+        });
     },
   },
   created() {},
   watch: {
     '$route.query.id'(val) {
-      if (val) {
-        this.getData();
-      }
+      this.getData();
     },
   },
 };

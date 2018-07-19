@@ -6,22 +6,6 @@ const service = axios.create({
   timeout: 4000, // 请求超时时间
 });
 
-let interceptor = response => {
-  if (response.data === 'INTERCEPT') {
-    Message.error('登陆超时');
-    router.replace({ path: 'login' });
-    return false;
-  }
-  if (response.data.code == 1006) {
-    Message.error('密码错误');
-    return false;
-  } else if (response.data.code != 0) {
-    Message.error('服务繁忙');
-    return false;
-  } else {
-    return true;
-  }
-};
 let pending = []; //声明一个数组用于存储每个ajax请求的取消函数和ajax标识
 let cancelToken = axios.CancelToken;
 let removePending = config => {
@@ -56,25 +40,33 @@ service.interceptors.request.use(
   error => {
     // Do something with request error
     console.log(error); // for debug
-    return Promise.reject(error);
+    Promise.reject(error);
   },
 );
 
 // respone拦截器
 service.interceptors.response.use(
   response => {
-    if (interceptor(response)) {
-      return response.data.data;
-    } else {
-      return Promise.reject(response.data);
+    // removePending(response.config);
+    if (response.data === 'INTERCEPT') {
+      Message.error('登陆超时');
+      router.replace({ path: 'login' });
     }
+    if (response.data.code == 1006) {
+      Message.error('密码错误');
+    } else if (response.data.code != 0) {
+      Message.error('服务繁忙');
+    } else {
+      return response.data.data;
+    }
+    Promise.reject(response.data);
   },
   error => {
     console.log('err' + error); // for debug
-    if (error == 'Cancel') {
-      error = {
-        message: '重复提交',
-      };
+    if(error == 'Cancel'){
+      error ={
+        message:"重复提交"
+      }
     }
     Message({
       message: error.message || error,

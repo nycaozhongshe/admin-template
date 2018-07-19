@@ -126,18 +126,6 @@ let col = [
     type: 'number',
   },
   {
-    prop: 'needShareNum',
-    label: '可分享人数',
-    required: true,
-    type: 'number',
-  },
-  {
-    prop: 'salePrice',
-    label: '优惠价格',
-    required: true,
-    type: 'number',
-  },
-  {
     prop: 'createTime',
     label: '创建时间',
     type: 'number',
@@ -145,6 +133,7 @@ let col = [
     width: 150,
   },
 ];
+let statusList = ['正常', '停用'];
 
 // let searchTypeList = [
 //   {
@@ -235,16 +224,16 @@ export default {
      */
     cellClick(params) {
       let { row, column, cell, event } = params;
-      if (this.cellClickKey.indexOf(column.property) >= 0) {
-        this.selection = row;
-        this.$router.push({
-          path: 'courseDetail',
-          query: {
-            id: this.selection.id,
-            name: this.selection.name,
-          },
-        });
-      }
+      // if (this.cellClickKey.indexOf(column.property) >= 0) {
+      //   this.selection = row;
+      //   this.$router.push({
+      //     path: 'courseDetail',
+      //     query: {
+      //       id: this.selection.id,
+      //       name: this.selection.name,
+      //     },
+      //   });
+      // }
     },
     changeInfo(command) {
       switch (command.command) {
@@ -274,27 +263,27 @@ export default {
     },
     miniCoursePlateList() {
       this.$store.dispatch('getCourseTypeList', {}).then(res => {
-        this.col[4].options = res.map(item => {
-          let children = item.categories.map(i => {
-            return {
-              label: i.title,
-              value: i.id,
-            };
-          });
-          let params = {
-            label: item.title,
-            value: item.id,
-            children,
-          };
-          return params;
-        });
+        // this.col[4].options = res.map(item => {
+        //   let children = item.categories.map(i => {
+        //     return {
+        //       label: i.title,
+        //       value: i.id,
+        //     };
+        //   });
+        //   let params = {
+        //     label: item.title,
+        //     value: item.id,
+        //     children,
+        //   };
+        //   return params;
+        // });
       });
     },
-    // { courseId: this.$route.query.id }
     /**
      * 获取列表参数操作
      */
     afterGetData(res) {
+      console.log(res);
       this.pageTotal = res.total || 0;
       this.tableData = res.content || [];
     },

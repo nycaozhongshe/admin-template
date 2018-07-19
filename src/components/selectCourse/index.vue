@@ -58,7 +58,10 @@
 </template>
 
 <script>
-import tableTemplate from '@/components/table/tableTemplate.js';
+import { formatDate } from '@/assets/methods';
+import tableTemplate from '@/components/common/tableTemplate.js';
+import { dateFtt } from '@/assets/methods';
+import courseManagement from '@/components/courseAddVideo.vue';
 
 let col = [
   {
@@ -131,6 +134,7 @@ export default {
     };
   },
   components: {
+    courseManagement,
   },
   methods: {
     clearSelection() {

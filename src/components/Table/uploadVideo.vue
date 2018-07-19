@@ -31,7 +31,7 @@
   </div>
 </template>
 <script>
-import { mapGetters, mapMutations } from 'vuex';
+import { mapMutations, mapState } from 'vuex';
 import axios from 'axios';
 export default {
   name: 'uploadVideo',
@@ -56,10 +56,11 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(['UP_LOAD_VIDEO_LIST']),
+    ...mapState(['UP_LOAD_VIDEO_LIST']),
   },
   methods: {
     ...mapMutations(['ADD_UPLAOD_VIDEO_ITEM', 'DEL_UPLAOD_VIDEO_ITEM']),
+
     getTime() {
       return new Date().getTime() + this.getRandom(0, 999999999999);
     },
@@ -119,19 +120,25 @@ export default {
           videoId: this.videoKey ? this.videoKey : null,
         })
         .then(res => {
-          let data = res;
-          this.uploadAuth = data.uploadAuth;
-          this.uploadAddress = data.uploadAddress;
-          this.videoId = data.videoId;
-          this.childrenProps = Object.assign(
-            {},
-            { key: this.videoId, prop: this.prop },
-          );
+          if (res.data.code === 0) {
+            let data = res.data.data;
+            this.uploadAuth = data.uploadAuth;
+            this.uploadAddress = data.uploadAddress;
+            this.videoId = data.videoId;
+            this.childrenProps = Object.assign(
+              {},
+              { key: this.videoId, prop: this.prop },
+            );
 
-          //重新赋值
-          this.uploader.options.onUploadSucceed = this.onUploadSucceed;
-          this.uploader.options.onUploadstarted = this.onUploadstarted;
-          this.uploader.startUpload();
+            //重新赋值
+            this.uploader.options.onUploadSucceed = this.onUploadSucceed;
+            this.uploader.options.onUploadstarted = this.onUploadstarted;
+            this.uploader.startUpload();
+          } else {
+            this.$message.error(
+              (res.data.msg || '获取token失效') + ',上传失败',
+            );
+          }
         })
         .catch(() => {
           this.$message.error('上传失败，获取token');

@@ -116,32 +116,6 @@ export const constantRouterMap = [
       },
     ],
   },
-  {
-    path: '',
-    component: Layout,
-    children: [
-      {
-        path: 'topic',
-        name: 'topic',
-        component: () => import('@/views/topic/index'),
-        meta: { title: '专题管理', icon: 'form' },
-      },
-    ],
-  },
-
-  {
-    path: '',
-    component: Layout,
-    hidden: true,
-    children: [
-      {
-        path: 'topicDetail',
-        name: 'topicDetail',
-        component: () => import('@/views/topicDetail/index'),
-        meta: { title: '专题详情', icon: 'form' },
-      },
-    ],
-  },
   //
   {
     path: '/example',

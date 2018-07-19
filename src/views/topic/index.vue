@@ -16,25 +16,33 @@
                      :button-type="['add']">
       </custom-search>
     </div>
-    <custom-table :data="tableData"
-                  :height="tableHeight"
-                  @cell-click="cellClick"
-                  @current-change="currentChange"
-                  :expandOperationList="[]"
-                  :v-loading="loading"
-                  :expandShow="false"
-                  ref="childTable"
-                  :col="col"
-                  :operation-list="operationList"
-                  :formatter="formatter"
-                  @change-info="changeInfo">
-    </custom-table>
-    <el-pagination class="table-page-footer"
-                   @current-change="handleCurrentChange"
-                   :current-page.sync="currentPage"
-                   :page-size="pageConfig.page_size"
-                   layout="total, prev, pager, next"
-                   :total="pageTotal">
+    <el-table class="table-page-content"
+              border
+              stripe
+              size="small"
+              :data="tableData"
+              style="width: 100%"
+              v-loading="loading"
+              :height="tableHeight"
+              @cell-click="cellClick"
+              @select="handleSelectionChange"
+              @select-all="handleSelectionChange"
+              ref="table">
+
+      <custom-table-colum :col="col"
+                          :formatter="formatter"
+                          @change-info="changeInfo"
+                          :operation-list="operationList">
+      </custom-table-colum>
+    </el-table>
+
+    <el-pagination
+      class="table-page-footer"
+      @current-change="handleCurrentChange"
+      :current-page.sync="currentPage"
+      :page-size="pageConfig.page_size"
+      layout="total, prev, pager, next"
+      :total="pageTotal">
     </el-pagination>
 
     <el-dialog class="eiditor__wrapper"
@@ -67,7 +75,9 @@
 </template>
 
 <script>
-import tableTemplate from '@/components/table/tableTemplate.js';
+import { formatDate } from '@/assets/methods';
+import tableTemplate from '@/components/common/tableTemplate.js';
+import { dateFtt } from '@/assets/methods';
 
 let col = [
   {
@@ -113,14 +123,16 @@ let formatter = (row, column, cellValue, index) => {
 };
 let operationList = [
   {
+    command: 'view',
+    content: '内容',
+  },
+  {
     command: 'edit',
     content: '编辑',
-    type: 'primary',
   },
   {
     command: 'del',
     content: '删除',
-    type: 'danger',
   },
 ];
 export default {
@@ -133,14 +145,16 @@ export default {
       operationList,
       editTitle: '',
       cellClickKey: ['topicName'],
-      delMethods: 'delTopic',
-      getMethods: 'getTopicList',
-      editMethods: 'updateTopic',
+      delMethods: 'delMIniTopic',
+      getMethods: 'miniTopicList',
+      editMethods: 'addMIniTopic',
       delInformationTest: '停用成功',
       delConfirmTest: '请确认是否停用此条信息',
-      pageTotal: 0,
+      pageTotal:0,
       editorProcessParams: function(params) {
-        delete params.createTime;
+        delete params.code;
+        delete params.msg;
+        delete params.data;
         return params;
       },
       //
@@ -153,21 +167,20 @@ export default {
     },
   },
   methods: {
-    /**
+     /**
      * 删除参数处理
      */
     delProcessParams(row) {
-      return { topicId: row.id };
+      return { topicId:  row.id };
     },
     /*
       * 点击指定字段显示预览
      */
-    cellClick(params) {
-      let { row, column, cell, event } = params;
+    cellClick(row, column, cell, event) {
       if (this.cellClickKey.indexOf(column.property) >= 0) {
         this.selection = row;
         this.$router.push({
-          path: '/topicDetail',
+          path: '/miniSpecialTopicManagementDetail',
           query: {
             id: this.selection.id,
             name: this.selection.topicName,
@@ -192,7 +205,7 @@ export default {
           break;
         case 'edit':
           this.editTitle = '编辑信息';
-          this.editMethods = 'updateTopic';
+          this.editMethods = 'updateMiniTopic';
           this.selection = command.scope.row;
           this.eiditDialogVisible = true;
           break;
@@ -200,16 +213,20 @@ export default {
     },
     addInfo() {
       this.editTitle = '新建信息';
-      this.editMethods = 'createTopic';
+      this.editMethods = 'addMIniTopic';
       this.selection = {};
       this.eiditDialogVisible = true;
     },
-    /**
-     * 获取列表参数操作
-     */
-    afterGetData(res) {
-      this.pageTotal = res.total || 0;
-      this.tableData = res.content || [];
+    getData() {
+      this.loading = true;
+      this.$store.dispatch(this.getMethods, this.parameterHandling()).then(res => {
+        this.loading = false;
+        if (res.data.code == '0') {
+          if (this.$refs.table) this.$refs.table.bodyWrapper.scrollTop = 0;
+          this.tableData = res.data.data.content;
+          this.pageTotal = res.data.data.total;
+        }
+      });
     },
   },
 };

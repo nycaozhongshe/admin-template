@@ -18,21 +18,25 @@
                      :button-type="['choosingCourse']">
       </custom-search>
     </div>
+    <el-table class="table-page-content"
+              border
+              stripe
+              size="small"
+              :data="tableData"
+              style="width: 100%"
+              v-loading="loading"
+              :height="tableHeight"
+              @cell-click="cellClick"
+              @select="handleSelectionChange"
+              @select-all="handleSelectionChange"
+              ref="table">
 
-    <custom-table :data="tableData"
-                  :height="tableHeight"
-                  @cell-click="cellClick"
-                  @current-change="currentChange"
-                  :expandOperationList="[]"
-                  :v-loading="loading"
-                  :expandShow="false"
-                  ref="childTable"
-                  :col="col"
-                  :operation-list="operationList"
-                  :formatter="formatter"
-                  @change-info="changeInfo">
-    </custom-table>
-
+      <custom-table-colum :col="col"
+                          :formatter="formatter"
+                          @change-info="changeInfo"
+                          :operation-list="operationList">
+      </custom-table-colum>
+    </el-table>
     <el-pagination class="table-page-footer"
                    @current-change="handleCurrentChange"
                    :current-page.sync="currentPage"
@@ -58,10 +62,19 @@
 </template>
 
 <script>
-import tableTemplate from '@/components/table/tableTemplate.js';
-import selectCourse from '@/components/selectCourse/index';
+import { formatDate } from '@/assets/methods';
+import tableTemplate from '@/components/common/tableTemplate.js';
+import { dateFtt } from '@/assets/methods';
+import selectCourse from '@/components/miniProgram/SpecialTopicManagementDetail/selectCourse';
 
 let col = [
+  // {
+  //   prop: 'id',
+  //   label: 'uid',
+  //   width: 300,
+  //   fixed: 'left',
+  //   disabled: true,
+  // },
   {
     prop: 'name',
     label: '课程名称',
@@ -128,7 +141,6 @@ let operationList = [
   {
     command: 'del',
     content: '删除',
-    type: 'danger',
   },
 ];
 export default {
@@ -142,9 +154,9 @@ export default {
       editTitle: '',
       selectCourseShow: false,
       cellClickKey: ['topicName'],
-      delMethods: 'deleteCourseInTopic',
-      getMethods: 'selectTopicOrCourse',
-      editMethods: 'addCourseToTopic',
+      delMethods: 'delMIniCourseInTopic',
+      getMethods: 'miniCourseInTopicList',
+      editMethods: 'addMIniCourseInTopic',
       delInformationTest: '停用成功',
       delConfirmTest: '请确认是否停用此条信息',
       editorProcessParams: function(params) {
@@ -245,20 +257,23 @@ export default {
     delProcessParams(row) {
       return { courseId: row.id };
     },
-    /**
-     * 获取列表发送参数处理
-     */
-    parameterHandling() {
-      return Object.assign(this.pageParameterHandling(), {
-        topicId: this.$route.query.id,
-      });
-    },
-    /**
-     * 获取列表参数操作
-     */
-    afterGetData(res) {
-      this.pageTotal = res.total || 0;
-      this.tableData = res.content || [];
+    getData() {
+      this.loading = true;
+      this.$store
+        .dispatch(
+          this.getMethods,
+          Object.assign(this.parameterHandling(), {
+            topicId: this.$route.query.id,
+          }),
+        )
+        .then(res => {
+          this.loading = false;
+          if (res.data.code == '0') {
+            if (this.$refs.table) this.$refs.table.bodyWrapper.scrollTop = 0;
+            this.tableData = res.data.data.content;
+            this.pageTotal = res.data.data.total;
+          }
+        });
     },
   },
   watch: {
