@@ -33,3 +33,7 @@
     background-color: #1f2d3d !important;
   }
 }
+
+body .el-table th.gutter{
+  display: table-cell!important;
+}

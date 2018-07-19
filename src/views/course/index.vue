@@ -127,7 +127,7 @@ let col = [
   },
   {
     prop: 'needShareNum',
-    label: '分享人数',
+    label: '可分享人数',
     required: true,
     type: 'number',
   },

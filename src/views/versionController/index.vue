@@ -1,16 +1,22 @@
 <!--  -->
 <template>
-  <div class="version_warpper">
-    <div v-loading="loading">
-      <el-switch v-model="value"
-                 class="switch"
-                 :disabled="disabled"
-                 @change="change"
-                 active-text="审核版本"
-                 inactive-text="线上版本">
-      </el-switch>
-    </div>
 
+  <div class="table-page__wrapper">
+
+    <div class="table-page-header__wrapper">
+      <span class="title"> 版本管理</span>
+    </div>
+    <div class="version_warpper">
+      <div v-loading="loading">
+        <el-switch v-model="value"
+                   class="switch"
+                   :disabled="disabled"
+                   @change="change"
+                   active-text="审核版本"
+                   inactive-text="线上版本">
+        </el-switch>
+      </div>
+    </div>
   </div>
 
 </template>
@@ -50,7 +56,7 @@ export default {
 .switch {
   margin-top: 20px;
 }
-.version_warpper{
+.version_warpper {
   padding: 20px;
 }
 </style>

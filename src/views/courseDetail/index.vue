@@ -32,7 +32,7 @@
                   :operation-list="operationList"
                   :formatter="formatter"
                   v-loading="loading"
-                  :courseShow="true"
+                  :course-show="true"
                   ref="childTable"
                   @del-section="delSection"
                   @edit-section="editSection"
@@ -92,7 +92,7 @@ let col = [
   {
     prop: 'sort',
     label: '排序',
-    width: 100,
+    width: 150,
     required: true,
     type: 'number',
   },
@@ -161,7 +161,7 @@ let operationList = [
 ];
 let searchTypeList = [];
 export default {
-  name: 'chapter-list',
+  name: 'courseDetail',
   extends: tableTemplate,
   data() {
     return {
@@ -285,7 +285,7 @@ export default {
       this.tableData = res || [];
       if (this.$refs.childTable) {
         this.$refs.childTable.$refs.table.toggleRowExpansion(
-          this.tableData[this.toggleRowExpansionIndex]
+          this.tableData[this.toggleRowExpansionIndex || 0],
         );
       }
     },

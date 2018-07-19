@@ -5,7 +5,7 @@
       <div v-for="(item,index) in sections"
            :key="index"
            class="item">
-        <div>
+        <div class="content">
           <span class="text">课时名 : {{item.name }} </span>
           <span class="text"> 类型 : {{contentType(item.contentType) }}</span>
           <span class="text"> 排序 : {{item.sort }}</span>
@@ -76,7 +76,7 @@ export default {
   },
   mounted() {},
   methods: {
-    free(type){
+    free(type) {
       return type ? '试看' : '收费';
     },
     contentType(type) {
@@ -106,6 +106,8 @@ export default {
 
 <style lang="scss" >
 .box-card {
+  width: 100%;
+  height: 100%;
   font-size: 12px;
   text-align: left;
   .el-card__header,
@@ -130,6 +132,12 @@ export default {
     .text:nth-child(3) {
       min-width: 52px;
     }
+  }
+  .content{
+    flex: 1;
+  }
+  .operation{
+    flex:0 0 100px;
   }
 }
 </style>

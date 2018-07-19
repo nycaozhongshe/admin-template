@@ -2,7 +2,6 @@
 <template>
   <!-- :default-expand-all="true" -->
   <el-table class="table-page-content"
-            :class="{'table-page-content': courseShow}"
             :data="data"
             v-loading="vLoading"
             border
@@ -19,7 +18,8 @@
                      fixed="left"
                      v-if="expandShow">
       <template slot-scope="props">
-        <div @click="clickExpandContent(props.row)">
+        <div @click="clickExpandContent(props.row)"
+             style="width:100%">
           <custom-table :data="props.row.categories"
                         :col="col"
                         size="mini"
@@ -33,18 +33,22 @@
         </div>
       </template>
     </el-table-column>
+
     <el-table-column type="expand"
                      fixed="left"
-                     v-if="courseShow">
+                     v-else-if="courseShow">
       <template slot-scope="props">
-        <div @click="clickExpandContent(props.row)">
-          <chapter-list :list="props.row"
-                        @edit-info="editSection"
-                        @del-info="delSection">
-          </chapter-list>
-        </div>
+        <template>
+          <div @click="clickExpandContent(props.row)">
+            <chapter-list :list="props.row"
+                          @edit-info="editSection"
+                          @del-info="delSection">
+            </chapter-list>
+          </div>
+        </template>
       </template>
     </el-table-column>
+
     <el-table-column type="index"
                      fixed="left"
                      width="50"
@@ -144,6 +148,7 @@ export default {
     },
     /**格式化数据 */
     formatter: {},
+
     /**不显示操作 */
     noOperation: {
       default: false,
@@ -157,7 +162,7 @@ export default {
       },
     },
     /** 课程列表 */
-    courseShow: {
+    'course-show': {
       default: false,
     },
     /** 添加课时 */
@@ -211,6 +216,9 @@ export default {
     changeInfoType(command) {
       this.$emit('change-info-type', command);
     },
+    initWidth(){
+      console.log(this.$refs.table)
+    }
   },
 };
 </script>
